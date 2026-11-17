@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+short_colour=$'\e[01;32m'
+long_colour=$'\e[1;37m'
+reset_colour=$'\e[m'
+
+usage() {
+  echo "usage: githash [skip | full [skip] | search <rev>]" >&2
+  exit 1
+}
+
+if [[ $# -eq 0 ]]; then
+  printf '%b%s%b\n' "${short_colour}" "$(git rev-parse --short HEAD)" "${reset_colour}"
+  exit 0
+fi
+
+case "$1" in
+  search)
+    [[ $# -eq 2 ]] || usage
+    if git merge-base --is-ancestor "$2" HEAD 2>/dev/null; then
+      printf '%bhash %s is in the current branch%b\n' "${short_colour}" "$2" "${reset_colour}"
+    else
+      printf '%bhash %s is not in the current branch%b\n' "${long_colour}" "$2" "${reset_colour}"
+      exit 1
+    fi
+    git branch --contains "$2"
+    ;;
+  full)
+    skip="${2:-0}"
+    [[ "${skip}" =~ ^[0-9]+$ ]] || usage
+    full_hash="$(git rev-parse --verify "HEAD~${skip}")"
+    short_hash="$(git rev-parse --short "HEAD~${skip}")"
+    printf '%b%s%b%s%b\n' \
+      "${short_colour}" "${short_hash}" \
+      "${long_colour}" "${full_hash#"${short_hash}"}" \
+      "${reset_colour}"
+    ;;
+  *)
+    [[ "$1" =~ ^[0-9]+$ && $# -eq 1 ]] || usage
+    printf '%b%s%b\n' "${short_colour}" "$(git rev-parse --short "HEAD~$1")" "${reset_colour}"
+    ;;
+esac

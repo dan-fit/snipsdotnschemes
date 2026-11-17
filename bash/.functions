@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+
+backup() {
+  local stamp dest
+  if [[ $# -ne 1 ]]; then
+    echo "usage: backup <name>" >&2
+    return 1
+  fi
+  stamp="$(date +"%Y-%m-%d")"
+  dest="${HOME}/backups/${1}/${stamp}"
+  mkdir -p "${dest}"
+  cp -R . "${dest}"
+}
+
+compress() {
+  if [[ $# -ne 2 ]]; then
+    echo "usage: compress <dir> <archive>" >&2
+    return 1
+  fi
+  if [[ -e "$2" ]]; then
+    echo "'$2' already exists!" >&2
+    return 1
+  fi
+  case "$2" in
+    *.tar.bz2|*.tbz2) tar -cjf "$2" "$1" ;;
+    *.tar.gz|*.tgz) tar -czf "$2" "$1" ;;
+    *.gz)
+      gzip "$1"
+      mv "${1}.gz" "$2"
+      ;;
+    *.tar) tar -cf "$2" "$1" ;;
+    *.zip) zip -r "$2" "$1" ;;
+    *)
+      echo "'$2' cannot be archived via compress" >&2
+      return 1
+      ;;
+  esac
+}
+
+extract() {
+  if [[ $# -ne 1 || ! -f "$1" ]]; then
+    echo "'${1:-}' is not a valid file!" >&2
+    return 1
+  fi
+  case "$1" in
+    *.tar.bz2|*.tbz2) tar -xvjf "$1" ;;
+    *.tar.gz|*.tgz) tar -xvzf "$1" ;;
+    *.bz2) bunzip2 "$1" ;;
+    *.rar) unrar x "$1" ;;
+    *.gz) gunzip "$1" ;;
+    *.tar) tar -xvf "$1" ;;
+    *.zip) unzip "$1" ;;
+    *.Z) uncompress "$1" ;;
+    *.7z) 7z x "$1" ;;
+    *)
+      echo "'$1' cannot be extracted via extract" >&2
+      return 1
+      ;;
+  esac
+}

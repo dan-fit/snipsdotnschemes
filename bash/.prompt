@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+prompt_git() {
+  local branch
+  branch="$(git symbolic-ref --short HEAD 2>/dev/null || git rev-parse --short HEAD 2>/dev/null)" || return 0
+  if [[ -n "$(git status --porcelain 2>/dev/null)" ]]; then
+    printf ' \[\033[41m\033[0;30m\]{%s}\[\033[0m\]' "${branch}"
+  else
+    printf ' \[\033[42m\033[0;30m\](%s)\[\033[0m\]' "${branch}"
+  fi
+}
+
+PS1='\n\[\033[0;32m\][\T] \[\033[0;36m\]\u@\h: \[\033[0;33m\]\w$(prompt_git)\n\[\033[1;32m\]o_O?\[\033[0m\] '

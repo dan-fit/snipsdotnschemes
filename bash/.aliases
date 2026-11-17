@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+alias fs="du -hs"
+alias l="ls -lA"
+alias r=". ~/.bash_profile"
+
+root() {
+  cd "$(git rev-parse --show-toplevel)"
+}

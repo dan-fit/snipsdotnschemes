@@ -1,0 +1,5 @@
+# Copy to zsh/.zshrc.local (gitignored) or ~/.zshrc.local.
+# Replace the placeholders. Do not commit hostnames or key paths.
+
+# alias proj="cd $HOME/path/to/projects && pwd"
+# alias sshbox="ssh -i ~/.ssh/<YOUR_KEY> user@host.example.com"

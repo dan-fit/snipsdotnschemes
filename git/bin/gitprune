@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+delete=0
+if [[ $# -eq 0 ]]; then
+  delete=0
+elif [[ $# -eq 1 && "$1" == "-d" ]]; then
+  delete=1
+else
+  echo "usage: gitprune [-d]" >&2
+  echo "  gitprune     list local branches that are not on origin" >&2
+  echo "  gitprune -d  delete those branches when they are fully merged" >&2
+  exit 1
+fi
+
+current="$(git rev-parse --abbrev-ref HEAD)"
+tmpdir="$(mktemp -d)"
+trap 'rm -rf "${tmpdir}"' EXIT
+
+git for-each-ref --format='%(refname:short)' refs/remotes/origin/ \
+  | sed 's#^origin/##' \
+  | sort > "${tmpdir}/remote"
+git for-each-ref --format='%(refname:short)' refs/heads/ \
+  | sort > "${tmpdir}/local"
+
+grep -vxF -f "${tmpdir}/remote" "${tmpdir}/local" \
+  | grep -vxF -e "${current}" -e "main" -e "master" > "${tmpdir}/dangling" || true
+
+if [[ "${delete}" -eq 0 ]]; then
+  cat "${tmpdir}/dangling"
+  exit 0
+fi
+
+while IFS= read -r branch; do
+  [[ -z "${branch}" ]] && continue
+  git branch -d "${branch}"
+done < "${tmpdir}/dangling"

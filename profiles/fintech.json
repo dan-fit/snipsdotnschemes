@@ -1,0 +1,10 @@
+{
+  "name": "FinTech Core",
+  "modules": [
+    "00-ai-behavior",
+    "01-fintech-standards",
+    "02-mcp-agentic-tools",
+    "03-rbac-authz",
+    "drizzle-migrations"
+  ]
+}

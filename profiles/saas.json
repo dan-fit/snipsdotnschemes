@@ -1,0 +1,14 @@
+{
+  "name": "Standard SaaS",
+  "modules": [
+    "00-ai-behavior",
+    "nextjs-trpc",
+    "fastapi-pydantic",
+    "02-mcp-agentic-tools",
+    "03-rbac-authz",
+    "multi-tenant-saas",
+    "01-fintech-standards",
+    "drizzle-migrations",
+    "github-actions-ci"
+  ]
+}

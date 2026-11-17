@@ -1,0 +1,50 @@
+[user]
+	email = <YOUR_EMAIL>
+	name = <YOUR_NAME>
+[init]
+	defaultBranch = main
+[push]
+	default = simple
+	autoSetupRemote = true
+[fetch]
+	prune = true
+	pruneTags = true
+[pull]
+	ff = only
+[rebase]
+	autoStash = true
+[merge]
+	conflictStyle = zdiff3
+[diff]
+	algorithm = histogram
+	colorMoved = plain
+[rerere]
+	enabled = true
+[column]
+	ui = auto
+[branch]
+	sort = -committerdate
+[tag]
+	sort = -version:refname
+[core]
+	autocrlf = input
+	longpaths = true
+	excludesfile = ~/.gitignore_global
+[commit]
+	verbose = true
+[help]
+	autocorrect = prompt
+[alias]
+	l = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%C(bold blue)<%an>%Creset' --abbrev-commit
+	plog = log --graph --abbrev-commit --decorate --date=relative --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all
+	s = "!git fetch --prune && git status"
+	ss = status
+	sw = switch
+	swc = switch -c
+	sync = "!git fetch --prune && git pull --ff-only"
+	m = "!git switch main && git pull --ff-only"
+	update = "!f() { bra=$(git rev-parse --abbrev-ref HEAD); git switch main && git pull --ff-only && git switch \"$bra\" && git merge --ff-only origin/main; }; f"
+	bd = "!f() { case \"$1\" in main|master) echo \"refusing to delete $1\"; exit 1;; esac; git branch -d \"$1\"; }; f"
+	bp = "!f() { case \"$1\" in main|master) echo \"refusing to delete $1\"; exit 1;; esac; git branch -d \"$1\" && git push origin --delete \"$1\"; }; f"
+	cn = "!f() { git switch -c \"$1\" && git push -u origin \"$1\"; }; f"
+	p = push
